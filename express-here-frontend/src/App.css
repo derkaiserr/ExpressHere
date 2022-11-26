@@ -1,38 +1,66 @@
-.App {
-  text-align: center;
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600;700&display=swap');
+
+*,
+*::before,
+*::after {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+:root {
+  font-size: 16px;
+  --bg-color-body: #fafafa;
+  --bg-color-second: #e7ebf1;
+  --color-accent: #ba758d;
+  --color-header: #113257;
+  --btn-color-primary: #ba758d;
+  --btn-color-hover: #6b6767; 
+}
+body {
+  font-family: "Poppins", sans-serif;
+  background-color: var(--bg-color-body);
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+button,
+.button {
+  font: inherit;
+  font-weight: bold;
+  padding: 0.5em;
+  border: unset;
+  border-radius: 0.3rem;
+  cursor: pointer;
+}
+button.disabled,
+.button.disabled {
+  filter: saturate(0.1);
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+button.primary-button,
+.button.primary-button {
   color: white;
+  background-color: var(--btn-color-primary);
+}
+button.primary-button:hover,
+.button.primary-button:hover {
+  filter: brightness(0.95);
 }
 
-.App-link {
-  color: #61dafb;
+button.secondary-button,
+.button.secondary-button {
+  color: var(--color-accent);
+  background: transparent;
+}
+button.secondary-button:hover,
+.button.secondary-button:hover {
+  text-decoration: underline;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+section{
+  padding: 6rem 10vw;
+}
+
+a {
+  cursor: pointer;
+  text-decoration: none;
+  color: var(--color-accent);
 }
