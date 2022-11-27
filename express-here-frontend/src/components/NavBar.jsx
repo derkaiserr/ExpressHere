@@ -1,12 +1,19 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../styles/NavBar.css"
 
-const NavBar = () => {
+const NavBar = (props) => { 
+    let navigate = useNavigate()
+    const handleBtnClick = (goPath) => {
+        if (props.isLogged){
+            return;
+        } 
+        navigate(goPath)
+    }
     return (
         <div id="nav-bar">
             <span className="logo">
-                <img src={require("../images/logo.png")} alt="logo" />
+                <img src={require("../images/logo.png")} alt="logo" onClick={() => handleBtnClick("/")}/>
             </span>
 
             <nav className="hidden">
@@ -22,13 +29,12 @@ const NavBar = () => {
             </div>
 
             <div id="account-login">
-                <button className="secondary-button"><Link to="/login">Login</Link></button>
-                <button className="primary-button"><Link to="signup" className="primary">Sign Up</Link></button>
-            </div>
-
+                <button className="secondary-button" onClick={() => handleBtnClick("/login")}>Login</button>
+                <button className="primary-button" onClick={() => handleBtnClick("/signup")}>Sign Up</button>
+            </div>        
+               
             <i className="icon hamburger-icon"></i>
-        </div>
-    );
+        </div>);
 }
 
 export default NavBar;

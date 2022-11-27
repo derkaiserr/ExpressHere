@@ -1,9 +1,9 @@
-const express = require('express');
-const cors = require('cors');
+const express = require("express");
+const cors = require("cors");
 
 const app = express();
 app.use(express.json());
-app.use(cors())
+app.use(cors());
 
 const mongoose = require("mongoose");
 const options = {
@@ -13,7 +13,7 @@ const options = {
   useUnifiedTopology: true,
 };
 
-const dbUrl = ``;
+const dbUrl = `mongodb+srv://AdiAndTemi:IgChC72ZxiUI1lBk@cluster0.m4adagj.mongodb.net/?retryWrites=true&w=majority`;
 
 mongoose.connect(dbUrl, options, (err) => {
   if (err) console.log(err);
@@ -36,25 +36,23 @@ const postSchema = new Schema(
     comments: Number,
     supports: Number,
     postType: Boolean,
-    relevantKeywords: Set,
+    relevantKeywords: [Object],
     relevantPictures: { data: Buffer, contentType: String },
   },
   { timestamps: true }
 );
 
-const userSchema = new Schema(
-  {
-    userID: String,
-    savedPosts: [postSchema],
-    posts: [postSchema],
-    password: String,
-  }
-);
+const userSchema = new Schema({
+  userID: String,
+  savedPosts: [postSchema],
+  posts: [postSchema],
+  password: String,
+});
 
 const postModel = mongoose.model("post", postSchema);
 const userModel = mongoose.model("user", userSchema);
 
-app.get('/', async (req, res) => {
+app.get("/", async (req, res) => {
   try {
     const posts = await postModel.find().sort({ _id: -1 });
     res.status(200).json({
@@ -69,14 +67,24 @@ app.get('/', async (req, res) => {
   }
 });
 
-app.get('/users/:userID', async (req, res) => {
+app.get("/login", async (req, res) => {
   try {
-    const { userID } = req.params;
-    const user = await userModel.find({ userID });
-    res.status(200).json({
-      status: 200,
-      data: user.posts,
+    const userData = await userModel.findOne({
+      userId: req.body.userId,
+      password: req.body.password,
     });
+    if (userData) {
+      const user = new userModel.create(req.body);
+      res.status(200).json({
+        status: 200,
+        data: user,
+      });
+    } else {
+      res.status(500).json({
+        status: 500,
+        message: "Invalid username/id!!",
+      });
+    }
   } catch (err) {
     res.status(400).json({
       status: 400,
@@ -85,14 +93,24 @@ app.get('/users/:userID', async (req, res) => {
   }
 });
 
-app.post('/user/signup', async (req, res) => {
+app.post("/signup", async (req, res) => {
   try {
-    const { userID, password } = req.body;
-    const user = await userModel.create({ userID, password });
-    res.status(200).json({
-      status: 200,
-      data: user,
+    const userData = await userModel.findOne({
+      userId: req.body.userId,
+      password: req.body.password,
     });
+    if (userData) {
+      res.status(500).json({
+        status: 500,
+        message: "Can't register using this email/phone! User already exists!!",
+      });
+    } else {
+      const user = new userModel.create(req.body);
+      res.status(200).json({
+        status: 200,
+        data: user,
+      });
+    }
   } catch (err) {
     res.status(400).json({
       status: 400,
@@ -101,12 +119,12 @@ app.post('/user/signup', async (req, res) => {
   }
 });
 
-app.post('/share', async (req, res) => {
+app.post("/share", async (req, res) => {
   try {
     const newPost = new postModel(req.body);
     if (req.body.name !== "Anonymous") {
       const savedPost = await newPost.save();
-    };
+    }
     res.status(200).json({
       status: 200,
       data: savedPost,
