@@ -30,22 +30,23 @@ const Schema = mongoose.Schema;
 const postSchema = new Schema(
   {
     postID: { type: String, required: true },
-    name: { type: String, required: true },
-    time: Date,
+    author: { type: String },
     post: String,
     comments: Number,
     supports: Number,
-    postType: Boolean,
-    relevantKeywords: [Object],
-    relevantPictures: { data: Buffer, contentType: String },
+    saves: Number,
+    postType: Boolean, // false signifies that the user wants to post anonymously
+    relevantKeywords: "", // comma seperated keywords
+    relevantPicture: { data: Buffer, contentType: String },
   },
   { timestamps: true }
 );
 
 const userSchema = new Schema({
   userID: String,
-  savedPosts: [postSchema],
-  posts: [postSchema],
+  name: String,
+  savedPostsIDs: [String],
+  userPostsIDs: [String],
   password: String,
 });
 

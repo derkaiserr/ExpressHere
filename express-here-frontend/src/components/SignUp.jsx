@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import "../styles/LogPortal.css";
 import { Link, useNavigate } from "react-router-dom";
 
-const SignUp = (userDetails, isLogged) => {
-    const [details, setDetails] = useState({userID: "", password: ""})
-    const navigate = useNavigate()
+const SignUp = (user, isLogged) => {
+    const initialData = {userID: "", name:"", password: ""}
+    const [details, setDetails] = useState(initialData)
+    let navigate = useNavigate()
     const handleSubmit = async () => {
         const response = await fetch("http://127.0.0.1:3001/signup", {
             method: "POST",
@@ -19,11 +20,11 @@ const SignUp = (userDetails, isLogged) => {
         // If user is not registered in database, signin
         if (responseJson.status === 200) {
             isLogged.setisLogged(true)
-            userDetails.setUser(responseJson.data)
+            user.setUser(responseJson.data)
             console.log(responseJson.data)
             navigate("-1") // navigate back to the previous page   
         } else {// If not, re-ask to signin
-          setDetails({userId: "", password: ""})
+          setDetails(initialData)
           console.log("not added")
         }
     }
@@ -34,11 +35,15 @@ const SignUp = (userDetails, isLogged) => {
                     <h2 className="title">Sign Up</h2>
                     <div className="input-field">
                         <i className="fas fa-user"></i>
-                        <input type="text" placeholder="Email/Phone" onChange={e => setDetails({...details, userID: e.target.value})} value={details.userID}/>
+                        <input type="text" placeholder="Your Name" onChange={e => setDetails({...details, name: e.target.value})} value={details.name} required="true"/>
+                    </div>
+                    <div className="input-field">
+                        <i className="fas fa-user"></i>
+                        <input type="text" placeholder="Email" onChange={e => setDetails({...details, userID: e.target.value})} value={details.userID} required="true"/>
                     </div>
                     <div className="input-field">
                         <i className="fas fa-lock"></i>
-                        <input type="password" placeholder="Password" onChange={e => setDetails({...details, password: e.target.value})} value={details.password}/>
+                        <input type="password" placeholder="Password" onChange={e => setDetails({...details, password: e.target.value})} value={details.password} required="true"/>
                     </div>
                     <input type="submit" value="SIGN IN" className="btn solid" />
                     </form>

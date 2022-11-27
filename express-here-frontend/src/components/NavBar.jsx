@@ -1,13 +1,16 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import "../styles/NavBar.css"
 
 const NavBar = (props) => { 
     let navigate = useNavigate()
     const handleBtnClick = (goPath) => {
-        if (props.isLogged){
+        if ((props.isLogged && goPath === "/signup") || (props.isLogged && goPath === "/login")){
             return;
-        } 
+        } else if (!props.isLogged && goPath === "/share"){
+            navigate("/login")
+            return
+        }
         navigate(goPath)
     }
     return (
@@ -18,8 +21,8 @@ const NavBar = (props) => {
 
             <nav className="hidden">
                 <ul>
-                <li><Link className="nav-link" to="/">Discover</Link></li>
-                <li><Link className="nav-link" to="/share">Share</Link></li>
+                <li><button className="nav-link secondary-button" onClick={() => handleBtnClick("/")}>Discover</button></li>
+                <li><button className="nav-link secondary-button" onClick={() => handleBtnClick("/share")}>Share</button></li>
                 </ul>
             </nav>
 

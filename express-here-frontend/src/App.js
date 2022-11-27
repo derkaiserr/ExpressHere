@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 import "./App.css";
 import "./App.css";
@@ -7,27 +7,49 @@ import Share from "./components/Share";
 import Login from "./components/Login";
 import SignUp from "./components/SignUp";
 function App() {
-  const [user, setUser] = useState({ name: "", id: "" });
+  const [user, setUser] = useState({
+    userID: "",
+    name: "",
+    savedPostsIDs: [],
+    userPostsIDs: [],
+    password: "",
+  });
+
   const [isLogged, setisLogged] = useState(false);
+  const [posts, setPosts] = useState([]);
+
+  // const fetchPosts = async () => {
+  //   const response = await fetch("http://localhost:3001/posts", {
+  //     method: "GET",
+  //     headers: { "Content-Type": "application/json" },
+  //     body: JSON.stringify(posts),
+  //   });
+  //   const responseJson = await response.json();
+  //   setPosts(responseJson.data);
+  // };
+
+  // useEffect(() => {
+  //   fetchPosts();
+  // }, [posts]);
 
   return (
     <div className="App">
       <Routes>
         <Route
           index="/"
-          element={<Discover userDetails={user} isLogged={isLogged} />}
+          element={<Discover user={user} isLogged={isLogged} posts={posts} />}
         />
         <Route
           path="/share"
-          element={<Share userDetails={user} isLogged={isLogged} />}
+          element={<Share user={user} isLogged={isLogged} posts={posts} />}
         />
         <Route
           path="/login"
-          element={<Login userDetails={user} isLogged={isLogged} />}
+          element={<Login user={user} isLogged={isLogged} />}
         />
         <Route
           path="/signup"
-          element={<SignUp userDetails={user} isLogged={isLogged} />}
+          element={<SignUp user={user} isLogged={isLogged} />}
         />
       </Routes>
     </div>
