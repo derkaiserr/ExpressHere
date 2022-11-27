@@ -51,7 +51,7 @@ const Share = (props) => {
         props.posts.setPosts(responseJson.body)
         navigate("/") // navigate back to the index page 
     } else {// If not recorded,
-      setValues(initialValue)
+      setValues(initialValue) //re-load the same page
     }
 }
 

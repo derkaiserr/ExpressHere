@@ -37,7 +37,7 @@ const postSchema = new Schema(
     saves: Number,
     postType: Boolean, // false signifies that the user wants to post anonymously
     relevantKeywords: "", // comma seperated keywords
-    relevantPicture: { data: Buffer, contentType: String },
+    relevantPicture: { data: Buffer, contentType: String }, // form data object
   },
   { timestamps: true }
 );
@@ -45,8 +45,8 @@ const postSchema = new Schema(
 const userSchema = new Schema({
   userID: String,
   name: String,
-  savedPostsIDs: [String],
-  userPostsIDs: [String],
+  savedPostsIDs: [String], // ids of saved posts
+  userPostsIDs: [String], // ids of user made posts
   password: String,
 });
 
