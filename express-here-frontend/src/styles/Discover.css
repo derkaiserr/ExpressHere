@@ -141,12 +141,6 @@ address {
 
 @media screen and (min-width: 650px) {
     .blog-card.full-width {
-        grid: 
-        'thumbnail footer' auto
-        'thumbnail paragraph' 1fr
-        'thumbnail heading' auto
-        / 50% 50%
-        ;
         grid-row: unset;
         grid-column: 1 / -1;
     }

@@ -6,6 +6,7 @@ import Discover from "./components/Discover";
 import Share from "./components/Share";
 import Login from "./components/Login";
 import SignUp from "./components/SignUp";
+import UserProfile from "./components/UserProfile";
 function App() {
   const [user, setUser] = useState({
     userID: "",
@@ -50,6 +51,10 @@ function App() {
         <Route
           path="/signup"
           element={<SignUp user={user} isLogged={isLogged} />}
+        />
+        <Route
+          path="/userprofile"
+          element={<UserProfile user={user} isLogged={isLogged} />}
         />
       </Routes>
     </div>

@@ -1,0 +1,20 @@
+.grid-parent section{
+  padding: 7rem 1rem;
+}
+.main-content, .sidebar {
+  border-radius: 8px;
+}
+
+.main-content {
+  background: linear-gradient(90deg, rgb(184 179 179) 0%, rgb(221 113 113) 50%, rgba(246,243,248,1) 100%)
+}
+
+.grid-parent {
+  display: grid;
+  grid-template-columns: 0.35fr 1fr;
+  gap: 20px;
+
+  @media (min-width: 56.25em){
+    grid-template-columns: 1fr 300px;
+  }
+}

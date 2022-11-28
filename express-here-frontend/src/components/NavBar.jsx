@@ -36,7 +36,7 @@ const NavBar = (props) => {
                 <button className="primary-button" onClick={() => handleBtnClick("/signup")}>Sign Up</button>
             </div>        
                
-            <i className="icon hamburger-icon"></i>
+            <i className="icon hamburger-icon" onClick={() => handleBtnClick("/userprofile")}></i>
         </div>);
 }
 
