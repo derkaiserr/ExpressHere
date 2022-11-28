@@ -46,11 +46,21 @@ function App() {
         />
         <Route
           path="/login"
-          element={<Login user={user} isLogged={isLogged} />}
+          element={
+            <Login
+              logUser={(newUser) => setUser(newUser)}
+              changeLogStatus={(newStatus) => setisLogged(newStatus)}
+            />
+          }
         />
         <Route
           path="/signup"
-          element={<SignUp user={user} isLogged={isLogged} />}
+          element={
+            <SignUp
+              logUser={(newUser) => setUser(newUser)}
+              changeLogStatus={(newStatus) => setisLogged(newStatus)}
+            />
+          }
         />
         <Route
           path="/userprofile"

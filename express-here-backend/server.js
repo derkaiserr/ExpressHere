@@ -13,7 +13,7 @@ const options = {
   useUnifiedTopology: true,
 };
 
-const dbUrl = `mongodb+srv://AdiAndTemi:IgChC72ZxiUI1lBk@cluster0.m4adagj.mongodb.net/?retryWrites=true&w=majority`;
+const dbUrl = `mongodb+srv://expressherev01:vkkrd5msvkwN5rYH@cluster0.jac2lby.mongodb.net/?retryWrites=true&w=majority`;
 
 mongoose.connect(dbUrl, options, (err) => {
   if (err) console.log(err);
@@ -43,11 +43,11 @@ const postSchema = new Schema(
 );
 
 const userSchema = new Schema({
-  userID: String,
+  userID: { type: String, required: true },
   name: String,
   savedPostsIDs: [String], // ids of saved posts
   userPostsIDs: [String], // ids of user made posts
-  password: String,
+  password: { type: String, required: true },
 });
 
 const postModel = mongoose.model("post", postSchema);
@@ -68,24 +68,13 @@ app.get("/", async (req, res) => {
   }
 });
 
-app.get("/login", async (req, res) => {
+app.get("/validusers", async (req, res) => {
   try {
-    const userData = await userModel.findOne({
-      userId: req.body.userId,
-      password: req.body.password,
+    let posts = await userModel.find();
+    res.status(200).json({
+      status: 200,
+      data: posts,
     });
-    if (userData) {
-      const user = new userModel.create(req.body);
-      res.status(200).json({
-        status: 200,
-        data: user,
-      });
-    } else {
-      res.status(500).json({
-        status: 500,
-        message: "Invalid username/id!!",
-      });
-    }
   } catch (err) {
     res.status(400).json({
       status: 400,
@@ -94,27 +83,53 @@ app.get("/login", async (req, res) => {
   }
 });
 
+app.post("/login", async (req, res) => {
+  try {
+    const userData = await userModel.find({ userID: req.body.userID });
+    // if user exits, check whether the password matches
+    if (userData[0].password === req.body.password) {
+      res.status(200).json({
+        status: 200,
+        data: userData[0],
+      });
+    } else {
+      // if user doesn't exists or password doesn't match
+      res.status(400).json({
+        status: 400,
+        message: "Wrong email/password! User doesn't exists!!",
+      });
+    }
+  } catch (err) {
+    // report error if ran under any issues
+    res.status(500).json({
+      status: 500,
+      message: err.message,
+    });
+  }
+});
+
 app.post("/signup", async (req, res) => {
   try {
-    const userData = await userModel.findOne({
-      userId: req.body.userId,
-      password: req.body.password,
-    });
-    if (userData) {
-      res.status(500).json({
-        status: 500,
+    const userData = await userModel.find({ userID: req.body.userID });
+    if (userData.length) {
+      // if user already exists
+      res.status(400).json({
+        status: 400,
         message: "Can't register using this email/phone! User already exists!!",
       });
     } else {
-      const user = new userModel.create(req.body);
+      // user doesn't exist!! add user login details to users table
+      let user = new userModel(req.body);
+      user = await user.save();
       res.status(200).json({
         status: 200,
         data: user,
       });
     }
   } catch (err) {
-    res.status(400).json({
-      status: 400,
+    // report error if ran under any issues
+    res.status(500).json({
+      status: 500,
       message: err.message,
     });
   }
@@ -163,7 +178,7 @@ app.delete("/user/post/:postID", async (req, res) => {
 
 app.delete("/users/:userID/saved/:savedID", async (req, res) => {
   try {
-    const { userD, savedID } = req.params;
+    const { userID, savedID } = req.params;
     const user = await postModel.findById(userID);
     user.savedPosts.pull(savedID);
     if (saved) {
@@ -185,4 +200,6 @@ app.delete("/users/:userID/saved/:savedID", async (req, res) => {
   }
 });
 
-app.listen(3001);
+app.listen(8081, function () {
+  console.log("App listening at http://127.0.0.1:8081/");
+});
