@@ -38,7 +38,6 @@ img {
     max-width: 100%;
 }
 
-
 .blog-card-container{
     display: grid;
     grid-gap: 1.5rem;
@@ -60,6 +59,7 @@ img {
         'footer' auto
         'paragraph' 1fr
         'heading' auto
+        'text-area' auto
         / 100%
     ;
     justify-items: stretch;
@@ -152,6 +152,7 @@ address {
         'footer thumbnail'
         'paragraph thumbnail'
         'heading thumbnail'
+        "text-area"
         ;
     }
 }

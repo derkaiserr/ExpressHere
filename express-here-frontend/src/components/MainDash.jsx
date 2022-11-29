@@ -23,12 +23,7 @@ const MainDash = (props) => {
     const handleComments = (e) =>{
         return
     }
-    const handleSupports = (e) =>{
-        return
-    }
-    const handleSaves = (e) =>{
-        return
-    }
+
     const evaluateDateAndTime = ((dateAndTime) => {
         const dateTime = new Date(dateAndTime).toUTCString()
         return dateTime
@@ -61,19 +56,11 @@ const MainDash = (props) => {
         return (<article className="blog-card full-width">
         <div className="header">
         <div className="sub-header">
-            <img src="https://img.icons8.com/office/24/000000/comments.png"/> 
+            <img src="https://img.icons8.com/office/40/000000/comments.png"/> 
             <button className="secondary-button" onClick={handleComments}>{post.comments} Comments</button>
         </div>
         <div className="sub-header">
-            <img src="https://img.icons8.com/nolan/24/amiable---v1.png"/>
-            <button className="secondary-button" onClick={handleSupports}>{post.supports} supports</button>
-        </div>
-        <div className="sub-header">
-            <img src="https://img.icons8.com/3d-fluency/24/null/save.png"/> 
-            <button className="secondary-button" onClick={handleSaves}>{post.saves} Saves</button>
-        </div>
-        <div className="sub-header">
-            <img src="https://img.icons8.com/color/24/null/delete.png"/>
+            <img src="https://img.icons8.com/color/40/null/delete.png"/>
             <button className="secondary-button" onClick={handleDelete} value={post.postID}> Delete</button>
         </div>
         </div>

@@ -10,9 +10,6 @@ const Discover = (props) => {
   const handleComments = (e) =>{
     return
   }
-  const handleSupports = (e) =>{
-    return
-  }
   const handleSaves = async(e) =>{
     e.preventDefault()
     // if not logged, ask user to first login
@@ -50,15 +47,11 @@ const Discover = (props) => {
     return (<article className="blog-card full-width">
     <div className="header">
       <div className="sub-header">
-        <img src="https://img.icons8.com/office/24/000000/comments.png"/> 
+        <img src="https://img.icons8.com/office/40/000000/comments.png"/> 
         <button className="secondary-button" onClick={handleComments} value={post.postID}>{post.comments} Comments</button>
       </div>
       <div className="sub-header">
-        <img src="https://img.icons8.com/nolan/24/amiable---v1.png"/>
-        <button className="secondary-button" onClick={handleSupports} value={post.postID}>{post.supports} Supports</button>
-      </div>
-      <div className="sub-header">
-        <img src="https://img.icons8.com/3d-fluency/24/null/save.png"/>
+        <img src="https://img.icons8.com/3d-fluency/40/null/save.png"/>
         <button className="secondary-button" onClick={handleSaves} value1={post.postID} value2={post.saves}>{post.saves} Saves</button>
       </div>
     </div>
@@ -70,9 +63,9 @@ const Discover = (props) => {
       <span> on </span>
       <time>{evaluateDateAndTime(post.createdAt)}</time>
     </footer>
-    <Comments/>
-  </article>)
-  })}
+    <Comments className="text-area"/>
+  </article>
+  )})}
   </main>
   </>)
 };

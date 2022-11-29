@@ -1,11 +1,10 @@
-import React, {useRef} from "react";
-import "../styles/Discover.css";
+import React from "react";
+import "../styles/Comments.css";
 
-const Comments = (props) => {
-  const currentPath = useRef()
+const Comments = () => {
   return (<>
   <div>
-    <input type="text" placeholder="Say something..."/>
+    <textarea type="text" placeholder="Say something..."/>
   </div>
   </>)
 };
