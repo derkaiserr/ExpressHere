@@ -142,7 +142,7 @@ app.post("/signup", async (req, res) => {
 app.post("/share/:userID", async (req, res) => {
   try {
     // add postID of the current post to the data of author
-    userModel.updateOne(
+    await userModel.findOneAndUpdate(
       { userID: req.params.userID },
       { $push: { userPostsIDs: req.body.postID } },
       { new: true }
@@ -231,6 +231,69 @@ app.get("/userprofile/userposts/:userID", async (req, res) => {
   }
 });
 
+app.put("/discover/saveposts/:userID", async (req, res) => {
+  try {
+    // find the current user who sent the save request
+    const user = await userModel.findOne({ userID: req.params.userID });
+    // check whether the current post is already saved
+    console.log(req.params.userID);
+    if (!req.body.saves || !user.savedPostsIDs.length) {
+      console.log("here");
+      await userModel.updateOne(
+        { userID: req.params.userID },
+        { $push: { savedPostsIDs: req.body.postID } },
+        { new: true }
+      );
+      await postModel.updateOne(
+        { postID: req.body.postID },
+        { $inc: { saves: 1 } },
+        { new: true }
+      );
+    } else {
+      console.log("here1");
+      const findPost = user.savedPostsIDs.filter(
+        (ID) => ID === req.body.postID
+      );
+      if (findPost.length) {
+        await userModel.updateOne(
+          { userID: req.params.userID },
+          { $pull: { savedPostsIDs: req.body.postID } },
+          { new: true }
+        );
+        await postModel.updateOne(
+          { postID: req.body.postID },
+          { $inc: { saves: -1 } },
+          { new: true }
+        );
+      } else {
+        console.log("here2");
+        await userModel.updateOne(
+          { userID: req.params.userID },
+          { $push: { savedPostsIDs: req.body.postID } },
+          { new: true }
+        );
+        await postModel.updateOne(
+          { postID: req.body.postID },
+          { $inc: { saves: 1 } },
+          { new: true }
+        );
+      }
+    }
+    // load current post
+    let posts = await postModel.find();
+    res.status(200).json({
+      status: 200,
+      data: posts,
+    });
+  } catch (err) {
+    // report error if ran under any issues
+    console.log(err.message);
+    res.status(500).json({
+      status: 500,
+      message: err.message,
+    });
+  }
+});
 app.delete("/user/post/:postID", async (req, res) => {
   try {
     const { postID } = req.params;

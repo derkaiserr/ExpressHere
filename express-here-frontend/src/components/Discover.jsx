@@ -1,10 +1,11 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import NavBar from "./NavBar";
 import "../styles/Discover.css";
 import Comments from "./Comments";
 
 const Discover = (props) => {
+  const navigate = useNavigate()
 
   const handleComments = (e) =>{
     return
@@ -12,9 +13,33 @@ const Discover = (props) => {
   const handleSupports = (e) =>{
     return
   }
-  const handleSaves = (e) =>{
-    return
+  const handleSaves = async(e) =>{
+    e.preventDefault()
+    // if not logged, ask user to first login
+    if (!props.isLogged){
+      navigate("/login")
+    }
+    const data = e.target.value.split[" "]
+    console.log(props.user.userID)
+    try{
+      console.log(`http://127.0.0.1:8081/discover/saveposts/${props.user.userID}`)
+        const response = await fetch(`http://127.0.0.1:8081/discover/saveposts/${props.user.userID}`, {
+        method: "PUT",
+        body: JSON.stringify({postID: data[0], saves: data[1]}),
+        headers: { "Content-Type": "application/json" },
+        })
+    
+        const responseJson = await response.json();
+        console.log(responseJson)
+        // If post added in database, update current posts
+        if (responseJson.status === 200) {
+            props.updatePosts(responseJson.data)
+        } 
+    } catch (err){
+        console.log(err.message)
+    }
   }
+  
   const evaluateDateAndTime = ((dateAndTime) => {
     const dateTime = new Date(dateAndTime).toUTCString()
     return dateTime
@@ -28,15 +53,15 @@ const Discover = (props) => {
     <div className="header">
       <div className="sub-header">
         <img src="https://img.icons8.com/office/24/000000/comments.png"/> 
-        <button className="secondary-button" onClick={handleComments}>{post.comments} Comments</button>
+        <button className="secondary-button" onClick={handleComments} value={post.postID}>{post.comments} Comments</button>
       </div>
       <div className="sub-header">
         <img src="https://img.icons8.com/nolan/24/amiable---v1.png"/>
-        <button className="secondary-button" onClick={handleSupports}>{post.supports} Supports</button>
+        <button className="secondary-button" onClick={handleSupports} value={post.postID}>{post.supports} Supports</button>
       </div>
       <div className="sub-header">
         <img src="https://img.icons8.com/3d-fluency/24/null/save.png"/> 
-        <button className="secondary-button" onClick={handleSaves}>{post.saves} Saves</button>
+        <button className="secondary-button" onClick={handleSaves} value={`${post.postID} ${post.saves}`}>{post.saves} Saves</button>
       </div>
     </div>
     <p>

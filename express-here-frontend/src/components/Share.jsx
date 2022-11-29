@@ -5,14 +5,23 @@ import FormInput from "./FormInput";
 
 const Share = (props) => {
   let navigate = useNavigate()
-  const numOfUserPosts = props.user.userPostsIDs.length
   const initialValue = {
-    postID: `${props.user.userID}${(numOfUserPosts + 1)}`,
-    author: `${props.user.name}`,
-    post: "",
-    postType: false,
-    relevantKeywords: "",
-  };
+      postID: `${props.user.userID}*%${generateUID()}`,
+      author: `${props.user.name}`,
+      post: "",
+      postType: false,
+      relevantKeywords: "",
+    };
+
+    function generateUID() {
+      var firstPart = (Math.random() * 46656) | 0;
+      var secondPart = (Math.random() * 46656) | 0;
+      firstPart = ("000" + firstPart.toString(36)).slice(-3);
+      secondPart = ("000" + secondPart.toString(36)).slice(-3);
+      return firstPart + secondPart;
+  }
+  
+  
   const [values, setValues] = useState(initialValue)
 
   const inputs = [
