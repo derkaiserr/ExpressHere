@@ -4,6 +4,19 @@ import "../styles/NavBar.css"
 
 const NavBar = (props) => { 
     let navigate = useNavigate()
+    const chooseAccountLoginButtons = () =>{
+        if (!props.isLogged){
+            return(<>
+            <button className="secondary-button" onClick={() => handleBtnClick("/login")}>Login</button>
+            <button className="primary-button" onClick={() => handleBtnClick("/signup")}>Sign Up</button>
+            </>)
+        } else {
+            return(<>
+                <button className="secondary-button" onClick={() => handleBtnClick("/userprofile")}>{props.user.name}</button>
+                <button className="primary-button" onClick={() => handlelogOut("/")}>Log Out</button>
+                </>)
+        } 
+    }
     const handleBtnClick = (goPath) => {
         if ((props.isLogged && goPath === "/signup") || (props.isLogged && goPath === "/login")){
             return;
@@ -13,6 +26,20 @@ const NavBar = (props) => {
         }
         navigate(goPath)
     }
+
+    const handlelogOut = (goPath) =>{
+        props.updateUser({
+            userID: "",
+            name: "",
+            savedPostsIDs: [],
+            userPostsIDs: [],
+            password: "",
+          })
+        props.changeLogStatus(false)
+        navigate(goPath)
+        alert("Successfully logged out!!!")
+    }
+
     return (
         <div id="nav-bar">
             <span className="logo">
@@ -32,8 +59,7 @@ const NavBar = (props) => {
             </div>
 
             <div id="account-login">
-                <button className="secondary-button" onClick={() => handleBtnClick("/login")}>Login</button>
-                <button className="primary-button" onClick={() => handleBtnClick("/signup")}>Sign Up</button>
+                {chooseAccountLoginButtons()}
             </div>        
                
             <i className="icon hamburger-icon" onClick={() => handleBtnClick("/userprofile")}></i>

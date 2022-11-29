@@ -1,11 +1,15 @@
 const express = require("express");
 const cors = require("cors");
+const multer = require("multer");
+const fs = require("fs");
+const bodyParser = require("body-parser");
 
 const app = express();
 app.use(express.json());
 app.use(cors());
 
 const mongoose = require("mongoose");
+const { request } = require("http");
 const options = {
   keepAlive: true,
   connectTimeoutMS: 10000,
@@ -30,23 +34,22 @@ const Schema = mongoose.Schema;
 const postSchema = new Schema(
   {
     postID: { type: String, required: true },
-    author: { type: String },
-    post: String,
-    comments: Number,
-    supports: Number,
-    saves: Number,
-    postType: Boolean, // false signifies that the user wants to post anonymously
-    relevantKeywords: "", // comma seperated keywords
-    relevantPicture: { data: Buffer, contentType: String }, // form data object
+    author: { type: String, required: true },
+    post: { type: String, require: true },
+    comments: { type: Number, default: 0 },
+    supports: { type: Number, default: 0 },
+    saves: { type: Number, default: 0 },
+    postType: { type: String, required: true }, // false signifies that the user wants to post anonymously
+    relevantKeywords: [String], // comma seperated keywords
   },
   { timestamps: true }
 );
 
 const userSchema = new Schema({
   userID: { type: String, required: true },
-  name: String,
-  savedPostsIDs: [String], // ids of saved posts
-  userPostsIDs: [String], // ids of user made posts
+  name: { type: String, required: true },
+  savedPostsIDs: { type: Array, default: [] }, // ids of saved posts
+  userPostsIDs: { type: Array, default: [] }, // ids of user made posts
   password: { type: String, required: true },
 });
 
@@ -55,10 +58,9 @@ const userModel = mongoose.model("user", userSchema);
 
 app.get("/", async (req, res) => {
   try {
-    const posts = await postModel.find().sort({ _id: -1 });
     res.status(200).json({
       status: 200,
-      data: posts,
+      data: "Successfully called!!",
     });
   } catch (err) {
     res.status(400).json({
@@ -68,29 +70,31 @@ app.get("/", async (req, res) => {
   }
 });
 
-app.get("/validusers", async (req, res) => {
-  try {
-    let posts = await userModel.find();
-    res.status(200).json({
-      status: 200,
-      data: posts,
-    });
-  } catch (err) {
-    res.status(400).json({
-      status: 400,
-      message: err.message,
-    });
-  }
-});
+// not required
+// app.get("/validusers", async (req, res) => {
+//   try {
+//     let posts = await userModel.find();
+//     res.status(200).json({
+//       status: 200,
+//       data: posts,
+//     });
+//   } catch (err) {
+//     res.status(400).json({
+//       status: 400,
+//       message: err.message,
+//     });
+//   }
+// });
 
 app.post("/login", async (req, res) => {
   try {
-    const userData = await userModel.find({ userID: req.body.userID });
+    const userData = await userModel.findOne({ userID: req.body.userID });
     // if user exits, check whether the password matches
-    if (userData[0].password === req.body.password) {
+    if (userData.password === req.body.password) {
+      console.log(userData);
       res.status(200).json({
         status: 200,
-        data: userData[0],
+        data: userData,
       });
     } else {
       // if user doesn't exists or password doesn't match
@@ -110,8 +114,8 @@ app.post("/login", async (req, res) => {
 
 app.post("/signup", async (req, res) => {
   try {
-    const userData = await userModel.find({ userID: req.body.userID });
-    if (userData.length) {
+    const userData = await userModel.findOne({ userID: req.body.userID });
+    if (userData) {
       // if user already exists
       res.status(400).json({
         status: 400,
@@ -135,15 +139,89 @@ app.post("/signup", async (req, res) => {
   }
 });
 
-app.post("/share", async (req, res) => {
+app.post("/share/:userID", async (req, res) => {
   try {
-    const newPost = new postModel(req.body);
-    if (req.body.name !== "Anonymous") {
-      const savedPost = await newPost.save();
+    // add postID of the current post to the data of author
+    userModel.updateOne(
+      { userID: req.params.userID },
+      { $push: { userPostsIDs: req.body.postID } },
+      { new: true }
+    );
+    // save author as anonymous name, if the user wants to make anonymous post
+    if (!req.body.postType) {
+      req.body.author = `anon${req.body.postID.length}`;
     }
+    // store relevant keywords as array
+    const relevantKeywords = req.body.relevantKeywords.trim().split(" ");
+    req.body.relevantKeywords = relevantKeywords;
+    // add post to postSchema
+    let post = new postModel(req.body);
+    post = await post.save();
     res.status(200).json({
       status: 200,
-      data: savedPost,
+      data: post,
+    });
+  } catch (err) {
+    // report error if ran under any issues
+    console.log(err.message);
+    res.status(500).json({
+      status: 500,
+      message: err.message,
+    });
+  }
+});
+
+app.get("/posts", async (req, res) => {
+  try {
+    let posts = await postModel.find();
+    res.status(200).json({
+      status: 200,
+      data: posts,
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: 400,
+      message: err.message,
+    });
+  }
+});
+
+app.get("/userprofile/savedposts/:userID", async (req, res) => {
+  try {
+    let user = await userModel.findOne({ userID: req.params.userID });
+    let posts = await postModel.find();
+    let filteredPosts = posts.filter((post) => {
+      let currentPost = user.savedPostsIDs.filter(
+        (savedPostID) => savedPostID === post.postID
+      );
+      return currentPost[0];
+    });
+    res.status(200).json({
+      status: 200,
+      data: filteredPosts,
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: 400,
+      message: err.message,
+    });
+  }
+});
+
+app.get("/userprofile/userposts/:userID", async (req, res) => {
+  try {
+    let user = await userModel.findOne({ userID: req.params.userID });
+    let posts = await postModel.find();
+    let filteredPosts = posts.filter((post) => {
+      let currentPost = user.userPostsIDs.filter(
+        (userPostID) => userPostID === post.postID
+      );
+      return currentPost[0];
+    });
+
+    res.status(200).json({
+      status: 200,
+      data: filteredPosts,
     });
   } catch (err) {
     res.status(400).json({

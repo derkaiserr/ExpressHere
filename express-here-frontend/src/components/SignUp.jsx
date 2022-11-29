@@ -20,13 +20,16 @@ const SignUp = (props) => {
 
             // If user is not registered in database, signin
             if (responseJson.status === 200) {
-                props.logUser(responseJson.data)
+                props.updateUser(responseJson.data)
                 props.changeLogStatus(true)
+                alert("Successfully signed in!")
                 navigate("/") // navigate back to the previous page   
             } else {// If not, re-ask to signin
+                alert("User already exits!")
             setDetails(initialData)
             }
         } catch (err){
+            alert("Server error. Try again!")
             console.log(err.message)
         }
     }

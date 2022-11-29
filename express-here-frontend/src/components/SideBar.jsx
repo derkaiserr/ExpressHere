@@ -1,51 +1,21 @@
-import React, { useState} from "react";
+import React, { useState, useEffect} from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../styles/SideBar.css"
-const SideBar = () => {
-    const dummyData = [{
-        postID: "bikalpa728@gmail.com7001",
-        author: "Bikalpa",
-        post: "I am having exams stress issues. Anyone willing to help?",
-        comments: 0,
-        supports: 0,
-        saves: 0,
-        postType: false,
-        relevantKeywords: "exams, stress",
-        relevantPicture: new FormData()
-      },
-      {
-        postID: "jakeshoudy123@gmail.com1231231",
-        author: "Jake",
-        post: "There are always some people who think they are the smartest in the class, but actually they aren't.",
-        comments: 10,
-        supports: 100,
-        saves: 101,
-        postType: true,
-        relevantKeywords: "smartest, wierd",
-        relevantPicture: new FormData()
-      },
-      {
-        postID: "iamgod@outlook.com",
-        author: "Elon Musk",
-        post: "Why would someone eat spaghetti with hotdog?",
-        comments: 101,
-        supports: 1000,
-        saves: 10,
-        postType: true,
-        relevantKeywords: "spaghetti",
-        relevantPicture: new FormData()
-      },
-    {
-        postID: "rampeddoing@gmail.com",
-        author: "Ronaldo7",
-        post: "I love playing cricket. But there those who hate it. They are idiots.",
-        comments: 80,
-        supports: 10,
-        saves: 10,
-        postType: true,
-        relevantKeywords: "cricket",
-        relevantPicture: new FormData()
-      }]
+const SideBar = (props) => {
+    const [savedPosts, setsavedPosts] = useState([])
+    // fetch all the user saved posts everytime the user loads his profile
+    useEffect(() => {
+        const fetchSavedPosts = async () => {
+        try {
+            const response = await fetch(`http://127.0.0.1:8081/userprofile/savedposts/${props.user.userID}`);
+            const responseJson = await response.json();
+            setsavedPosts(responseJson.data);
+        } catch (err) {
+            console.log(err.message);
+        }
+        };
+        fetchSavedPosts();
+    }, []);
 
     const handleComments = (e) =>{
         return
@@ -56,15 +26,16 @@ const SideBar = () => {
     const handleDelete = (e) =>{
         return
     }
+    const evaluateDateAndTime = ((dateAndTime) => {
+        const dateTime = new Date(dateAndTime).toUTCString()
+        return dateTime
+      })
+
     return (<>
-    <main class="blog-card-container">
-    {dummyData.map((post, idx) => {
-        return (<article className="blog-card full-width">
-        <div className="thumbnail">
-        <a href="are-there-a-couple-of-universes.html"
-            ><img alt={`img{idx}`}
-        /></a>
-        </div>
+    <main className="blog-card-container">
+    {savedPosts.map((post, idx) => {
+        return (
+        <article className="blog-card full-width">
         <div className="header">
         <div className="sub-header">
             <img src="https://img.icons8.com/office/24/000000/comments.png"/> 
@@ -85,7 +56,7 @@ const SideBar = () => {
         <footer className="author">
         <address>{post.author}</address>
         <span> on </span>
-        <time>{post.time}</time>
+        <time>{evaluateDateAndTime(post.createdAt)}</time>
         </footer>
     </article>)
     })}

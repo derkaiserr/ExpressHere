@@ -13,15 +13,17 @@ const Login = (props) => {
             // If a registered user with valid password, login
             console.log(responseJson)
             if (responseJson.status === 200) {
-                props.logUser(responseJson.data)
+                props.updateUser(responseJson.data)
                 props.changeLogStatus(true)
-                console.log("go")
+                alert("Successfully logged in!")
                 navigate("/") // navigate back to the previous page 
             } else {// If not, re-ask to login
+            alert("Email/Password wrong. Try again!")
             setDetails(initialData)
             }
         } catch (err){
             // If any error, re-load the form
+            alert("Server error. Try again!")
             console.log(err.message)
         }
     }

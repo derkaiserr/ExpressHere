@@ -5,19 +5,13 @@ import FormInput from "./FormInput";
 
 const Share = (props) => {
   let navigate = useNavigate()
-   // const numOfUserPosts = props.user.userPosts.length
+  const numOfUserPosts = props.user.userPostsIDs.length
   const initialValue = {
-    // postID: `${props.user.id}${(numOfUserPosts + 1) * 1000}`,
-    // author: `${props.user.name}`,
-    postID: "DummyID",
-    author: "DummyAuthor",
+    postID: `${props.user.userID}${(numOfUserPosts + 1)}`,
+    author: `${props.user.name}`,
     post: "",
-    comments: 0,
-    supports: 0,
-    saves: 0,
     postType: false,
     relevantKeywords: "",
-    relevantPicture: new FormData()
   };
   const [values, setValues] = useState(initialValue)
 
@@ -33,39 +27,35 @@ const Share = (props) => {
       id: 3,
       name: "relevantKeywords",
       type: "text",
-      placeholder: "Hi, love, ...",
-      label: "Keywords",
+      placeholder: "Love, Sad ...",
+      label: "Highlights",
     }
   ];
-
-  const handleSubmit = async () => {
-    const response = await fetch("http://localhost:3001/share", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
-    })
-
-    const responseJson = await response.json();
-    // If post was successfully recorded, 
-    if (responseJson.status === 200) {
-        props.posts.setPosts(responseJson.body)
-        navigate("/") // navigate back to the index page 
-    } else {// If not recorded,
-      setValues(initialValue) //re-load the same page
-    }
-}
 
   const onAlter = (e) => {
       setValues({ ...values, [e.target.name]: e.target.value });
 }
 
-  const fileHandler = (e) =>{
-    const files = e.target.files
-    const formData = new FormData()
-    formData.append('image', files[0])
-    setValues({...values, [e.target.name]: formData})
-  }
+const handleSubmit = async (e) => {
+  e.preventDefault()
+  try{
+      const response = await fetch(`http://127.0.0.1:8081/share/${props.user.userID}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(values),
+      })
 
+      const responseJson = await response.json();
+      console.log(responseJson)
+      // If post added in database, update current posts
+      if (responseJson.status === 200) {
+          props.updatePosts(responseJson.data)
+          navigate("/") // navigate back to the previous page   
+      } 
+  } catch (err){
+      console.log(err.message)
+  }
+}
   return (
     <div className="share-section">
       <form onSubmit={handleSubmit}>
@@ -78,10 +68,6 @@ const Share = (props) => {
             onChange={onAlter}
           />
         ))}
-        <div className="relevantPicture postType">
-          <label for="relevantPicture">Upload File</label>
-          <input name="relevantPicture" type="file" id="relevantPicture" accept="image/" onChange={fileHandler} required="true"/>
-        </div>
         <h2>How do you want to make this post?</h2>
         <div class="postType">
           <label for="anon">Anonymous</label>

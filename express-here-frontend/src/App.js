@@ -19,36 +19,52 @@ function App() {
   const [isLogged, setisLogged] = useState(false);
   const [posts, setPosts] = useState([]);
 
-  // const fetchPosts = async () => {
-  //   const response = await fetch("http://localhost:3001/posts", {
-  //     method: "GET",
-  //     headers: { "Content-Type": "application/json" },
-  //     body: JSON.stringify(posts),
-  //   });
-  //   const responseJson = await response.json();
-  //   setPosts(responseJson.data);
-  // };
+  // fetch all the posts everytime the app loads
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const response = await fetch("http://127.0.0.1:8081/posts");
+        const responseJson = await response.json();
+        setPosts(responseJson.data);
+      } catch (err) {
+        console.log(err.message);
+      }
+    };
 
-  // useEffect(() => {
-  //   fetchPosts();
-  // }, [posts]);
+    fetchPosts();
+  }, []);
 
   return (
     <div className="App">
       <Routes>
         <Route
           index="/"
-          element={<Discover user={user} isLogged={isLogged} posts={posts} />}
+          element={
+            <Discover
+              user={user}
+              posts={posts}
+              isLogged={isLogged}
+              changeLogStatus={(newStatus) => setisLogged(newStatus)}
+              updateUser={(currentUser) => setUser(currentUser)}
+              updatePosts={(currentPosts) => setPosts(currentPosts)}
+            />
+          }
         />
         <Route
           path="/share"
-          element={<Share user={user} isLogged={isLogged} posts={posts} />}
+          element={
+            <Share
+              user={user}
+              updateUser={(currentUser) => setUser(currentUser)}
+              updatePosts={(newPost) => setPosts([...posts, newPost])}
+            />
+          }
         />
         <Route
           path="/login"
           element={
             <Login
-              logUser={(newUser) => setUser(newUser)}
+              updateUser={(newUser) => setUser(newUser)}
               changeLogStatus={(newStatus) => setisLogged(newStatus)}
             />
           }
@@ -57,14 +73,23 @@ function App() {
           path="/signup"
           element={
             <SignUp
-              logUser={(newUser) => setUser(newUser)}
+              updateUser={(newUser) => setUser(newUser)}
               changeLogStatus={(newStatus) => setisLogged(newStatus)}
             />
           }
         />
         <Route
           path="/userprofile"
-          element={<UserProfile user={user} isLogged={isLogged} />}
+          element={
+            <UserProfile
+              user={user}
+              posts={posts}
+              isLogged={isLogged}
+              changeLogStatus={(newStatus) => setisLogged(newStatus)}
+              updateUser={(currentUsers) => setUser(currentUsers)}
+              updatePosts={(currentPosts) => setPosts(currentPosts)}
+            />
+          }
         />
       </Routes>
     </div>

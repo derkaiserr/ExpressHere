@@ -5,50 +5,7 @@ import "../styles/Discover.css";
 import Comments from "./Comments";
 
 const Discover = (props) => {
-  const dummyData = [{
-    postID: "bikalpa728@gmail.com7001",
-    author: "Bikalpa",
-    post: "I am having exams stress issues. Anyone willing to help?",
-    comments: 0,
-    supports: 0,
-    saves: 0,
-    postType: false,
-    relevantKeywords: "exams, stress",
-    relevantPicture: new FormData()
-  },
-  {
-    postID: "jakeshoudy123@gmail.com1231231",
-    author: "Jake",
-    post: "There are always some people who think they are the smartest in the class, but actually they aren't.",
-    comments: 10,
-    supports: 100,
-    saves: 101,
-    postType: true,
-    relevantKeywords: "smartest, wierd",
-    relevantPicture: new FormData()
-  },
-  {
-    postID: "iamgod@outlook.com",
-    author: "Elon Musk",
-    post: "Why would someone eat spaghetti with hotdog?",
-    comments: 101,
-    supports: 1000,
-    saves: 10,
-    postType: true,
-    relevantKeywords: "spaghetti",
-    relevantPicture: new FormData()
-  },
-{
-    postID: "rampeddoing@gmail.com",
-    author: "Ronaldo7",
-    post: "I love playing cricket. But there those who hate it. They are idiots.",
-    comments: 80,
-    supports: 10,
-    saves: 10,
-    postType: true,
-    relevantKeywords: "cricket",
-    relevantPicture: new FormData()
-  }]
+
   const handleComments = (e) =>{
     return
   }
@@ -58,18 +15,16 @@ const Discover = (props) => {
   const handleSaves = (e) =>{
     return
   }
-  
+  const evaluateDateAndTime = ((dateAndTime) => {
+    const dateTime = new Date(dateAndTime).toUTCString()
+    return dateTime
+  })
 
   return (<>
-  <NavBar isLogged={props.isLogged}/>
-  <main class="blog-card-container">
-  {dummyData.map((post, idx) => {
+  <NavBar isLogged={props.isLogged} user={props.user} updateUser={props.updateUser} changeLogStatus={props.changeLogStatus}/>
+  <main className="blog-card-container discover-card">
+  {props.posts.map((post, idx) => {
     return (<article className="blog-card full-width">
-    <div className="thumbnail">
-      <a href="are-there-a-couple-of-universes.html"
-        ><img alt={`img{idx}`}
-      /></a>
-    </div>
     <div className="header">
       <div className="sub-header">
         <img src="https://img.icons8.com/office/24/000000/comments.png"/> 
@@ -90,7 +45,7 @@ const Discover = (props) => {
     <footer className="author">
       <address>{post.author}</address>
       <span> on </span>
-      <time>{post.time}</time>
+      <time>{evaluateDateAndTime(post.createdAt)}</time>
     </footer>
     <Comments/>
   </article>)

@@ -45,6 +45,10 @@ img {
     grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
     justify-content: flex-start;
 }
+
+.discover-card{
+    background: linear-gradient(90deg, rgb(255, 255, 255) 0%, rgb(232, 171, 171) 50%, rgba(246,243,248,1) 100%);    ;
+}
 .blog-card{
     background: #f0f0f0;
     border-radius: .5rem;
@@ -53,7 +57,6 @@ img {
 
     display: grid;
     grid: 
-        'thumbnail' 15rem
         'footer' auto
         'paragraph' 1fr
         'heading' auto
