@@ -5,9 +5,7 @@ import Comments from "./Comments";
 
 const MainDash = (props) => {
     const [userPosts, setuserPosts] = useState([])
-    // fetch all the user posts everytime the user loads his profile
-    useEffect(() => {
-        const fetchUserPosts = async () => {
+    const fetchUserPosts = async () => {
         try {
             const response = await fetch(`http://127.0.0.1:8081/userprofile/userposts/${props.user.userID}`);
             const responseJson = await response.json();
@@ -17,6 +15,8 @@ const MainDash = (props) => {
             console.log(err.message);
         }
         };
+    // fetch all the user posts everytime the user loads his profile
+    useEffect(() => {
         fetchUserPosts();
     }, []);
 
@@ -29,13 +29,31 @@ const MainDash = (props) => {
     const handleSaves = (e) =>{
         return
     }
-    const handleDelete = (e) =>{
-        return
-    }
     const evaluateDateAndTime = ((dateAndTime) => {
         const dateTime = new Date(dateAndTime).toUTCString()
         return dateTime
       })
+
+    const handleDelete = async (e) =>{
+        e.preventDefault()
+        try{
+            const response = await fetch(`http://127.0.0.1:8081/username/delete/userposts/${props.user.userID}`, {
+            method: "DELETE",
+            body: JSON.stringify({postID: e.target.value}),
+            headers: { "Content-Type": "application/json" },
+            })
+        
+            const responseJson = await response.json();
+            console.log(responseJson)
+            // If post deleted in database, update saved posts
+            if (responseJson.status === 200) {
+                props.updatePosts(responseJson.data)
+                fetchUserPosts()
+            } 
+        } catch (err){
+            console.log(err.message)
+        }
+    }
 
     return (<div>
     <main className="blog-card-container">
@@ -56,7 +74,7 @@ const MainDash = (props) => {
         </div>
         <div className="sub-header">
             <img src="https://img.icons8.com/color/24/null/delete.png"/>
-            <button className="secondary-button" onClick={handleDelete}> Delete</button>
+            <button className="secondary-button" onClick={handleDelete} value={post.postID}> Delete</button>
         </div>
         </div>
         <p>

@@ -25,7 +25,6 @@ const SideBar = (props) => {
     }
     const handleDelete = async (e) =>{
         e.preventDefault()
-        console.log(props.user.userID)
         try{
             const response = await fetch(`http://127.0.0.1:8081/username/delete/savedposts/${props.user.userID}`, {
             method: "DELETE",

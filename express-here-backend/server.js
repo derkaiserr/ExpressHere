@@ -223,12 +223,12 @@ app.put("/discover/saveposts/:userID", async (req, res) => {
     console.log(req.params.userID);
     if (!req.body.saves || !user.savedPostsIDs.length) {
       console.log("here");
-      await userModel.updateOne(
+      await userModel.findOneAndUpdate(
         { userID: req.params.userID },
         { $push: { savedPostsIDs: req.body.postID } },
         { new: true }
       );
-      await postModel.updateOne(
+      await postModel.findOneAndUpdate(
         { postID: req.body.postID },
         { $inc: { saves: 1 } },
         { new: true }
@@ -239,24 +239,24 @@ app.put("/discover/saveposts/:userID", async (req, res) => {
         (ID) => ID === req.body.postID
       );
       if (findPost.length) {
-        await userModel.updateOne(
+        await userModel.findOneAndUpdate(
           { userID: req.params.userID },
           { $pull: { savedPostsIDs: req.body.postID } },
           { new: true }
         );
-        await postModel.updateOne(
+        await postModel.findOneAndUpdate(
           { postID: req.body.postID },
           { $inc: { saves: -1 } },
           { new: true }
         );
       } else {
         console.log("here2");
-        await userModel.updateOne(
+        await userModel.findOneAndUpdate(
           { userID: req.params.userID },
           { $push: { savedPostsIDs: req.body.postID } },
           { new: true }
         );
-        await postModel.updateOne(
+        await postModel.findOneAndUpdate(
           { postID: req.body.postID },
           { $inc: { saves: 1 } },
           { new: true }
@@ -278,13 +278,17 @@ app.put("/discover/saveposts/:userID", async (req, res) => {
     });
   }
 });
+
 app.delete("/username/delete/savedposts/:userID", async (req, res) => {
   try {
-    const { postID } = req.body.postID;
-    const post = await postModel.findByIdAndRemove(postID);
-    await userModel.updateOne(
+    await userModel.findOneAndUpdate(
       { userID: req.params.userID },
-      { $pull: { savedPostsIDs: req.params.userID } },
+      { $pull: { savedPostsIDs: req.body.postID } },
+      { new: true }
+    );
+    await postModel.findOneAndUpdate(
+      { userID: req.body.postID },
+      { $inc: { saves: -1 } },
       { new: true }
     );
     const posts = await postModel.find();
@@ -302,11 +306,10 @@ app.delete("/username/delete/savedposts/:userID", async (req, res) => {
 
 app.delete("/username/delete/userposts/:userID", async (req, res) => {
   try {
-    const { postID } = req.body.postID;
-    const post = await postModel.findByIdAndRemove(postID);
-    await userModel.updateOne(
+    await postModel.findOneAndDelete({ postID: req.body.postID });
+    await userModel.findOneAndUpdate(
       { userID: req.params.userID },
-      { $pull: { userPostsIDs: req.params.userID } },
+      { $pull: { userPostsIDs: req.body.postID } },
       { new: true }
     );
     const posts = await postModel.find();

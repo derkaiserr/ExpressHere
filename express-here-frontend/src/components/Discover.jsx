@@ -19,13 +19,11 @@ const Discover = (props) => {
     if (!props.isLogged){
       navigate("/login")
     }
-    const data = e.target.value.split[" "]
-    console.log(props.user.userID)
     try{
-      console.log(`http://127.0.0.1:8081/discover/saveposts/${props.user.userID}`)
+      console.log(e.target.getAttribute('value1'))
         const response = await fetch(`http://127.0.0.1:8081/discover/saveposts/${props.user.userID}`, {
         method: "PUT",
-        body: JSON.stringify({postID: data[0], saves: data[1]}),
+        body: JSON.stringify({postID: e.target.getAttribute('value1'), saves: e.target.getAttribute('value2')}),
         headers: { "Content-Type": "application/json" },
         })
     
@@ -60,8 +58,8 @@ const Discover = (props) => {
         <button className="secondary-button" onClick={handleSupports} value={post.postID}>{post.supports} Supports</button>
       </div>
       <div className="sub-header">
-        <img src="https://img.icons8.com/3d-fluency/24/null/save.png"/> 
-        <button className="secondary-button" onClick={handleSaves} value={`${post.postID} ${post.saves}`}>{post.saves} Saves</button>
+        <img src="https://img.icons8.com/3d-fluency/24/null/save.png"/>
+        <button className="secondary-button" onClick={handleSaves} value1={post.postID} value2={post.saves}>{post.saves} Saves</button>
       </div>
     </div>
     <p>
