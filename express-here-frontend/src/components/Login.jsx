@@ -8,7 +8,7 @@ const Login = (props) => {
     const handleSubmit = async (e) => {
         e.preventDefault()
         try{
-            const response = await fetch("http://127.0.0.1:8081/login", {method: "POST", body: JSON.stringify(details), headers: { "Content-Type": "application/json" }})
+            const response = await fetch("http://127.0.0.1:5000/login", {method: "POST", body: JSON.stringify(details), headers: { "Content-Type": "application/json" }})
             let responseJson = await response.json();
             // If a registered user with valid password, login
             console.log(responseJson)

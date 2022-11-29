@@ -18,7 +18,7 @@ const Discover = (props) => {
     }
     try{
       console.log(e.target.getAttribute('value1'))
-        const response = await fetch(`http://127.0.0.1:8081/discover/saveposts/${props.user.userID}`, {
+        const response = await fetch(`http://127.0.0.1:5000/discover/saveposts/${props.user.userID}`, {
         method: "PUT",
         body: JSON.stringify({postID: e.target.getAttribute('value1'), saves: e.target.getAttribute('value2')}),
         headers: { "Content-Type": "application/json" },

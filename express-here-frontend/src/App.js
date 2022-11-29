@@ -23,7 +23,7 @@ function App() {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:8081/posts");
+        const response = await fetch("http://127.0.0.1:5000/posts");
         const responseJson = await response.json();
         setPosts(responseJson.data);
       } catch (err) {

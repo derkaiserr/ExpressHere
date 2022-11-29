@@ -7,7 +7,7 @@ const MainDash = (props) => {
     const [userPosts, setuserPosts] = useState([])
     const fetchUserPosts = async () => {
         try {
-            const response = await fetch(`http://127.0.0.1:8081/userprofile/userposts/${props.user.userID}`);
+            const response = await fetch(`http://127.0.0.1:5000/userprofile/userposts/${props.user.userID}`);
             const responseJson = await response.json();
             console.log(responseJson)
             setuserPosts(responseJson.data);
@@ -32,7 +32,7 @@ const MainDash = (props) => {
     const handleDelete = async (e) =>{
         e.preventDefault()
         try{
-            const response = await fetch(`http://127.0.0.1:8081/username/delete/userposts/${props.user.userID}`, {
+            const response = await fetch(`http://127.0.0.1:5000/username/delete/userposts/${props.user.userID}`, {
             method: "DELETE",
             body: JSON.stringify({postID: e.target.value}),
             headers: { "Content-Type": "application/json" },

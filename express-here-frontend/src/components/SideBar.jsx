@@ -6,7 +6,7 @@ const SideBar = (props) => {
     const navigate = useNavigate()
     const fetchSavedPosts = async () => {
         try {
-            const response = await fetch(`http://127.0.0.1:8081/userprofile/savedposts/${props.user.userID}`);
+            const response = await fetch(`http://127.0.0.1:5000/userprofile/savedposts/${props.user.userID}`);
             const responseJson = await response.json();
             setsavedPosts(responseJson.data);
         } catch (err) {
@@ -24,7 +24,7 @@ const SideBar = (props) => {
     const handleDelete = async (e) =>{
         e.preventDefault()
         try{
-            const response = await fetch(`http://127.0.0.1:8081/username/delete/savedposts/${props.user.userID}`, {
+            const response = await fetch(`http://127.0.0.1:5000/username/delete/savedposts/${props.user.userID}`, {
             method: "DELETE",
             body: JSON.stringify({postID: e.target.value}),
             headers: { "Content-Type": "application/json" },
