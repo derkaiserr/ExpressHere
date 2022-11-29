@@ -1,8 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const multer = require("multer");
-const fs = require("fs");
-const bodyParser = require("body-parser");
+const port = process.env.PORT || 5000;
 
 const app = express();
 app.use(express.json());
@@ -325,6 +323,6 @@ app.delete("/username/delete/userposts/:userID", async (req, res) => {
   }
 });
 
-app.listen(8081, function () {
-  console.log("App listening at http://127.0.0.1:8081/");
+app.listen(port, function () {
+  console.log("App listening at http://127.0.0.1:5000/");
 });
