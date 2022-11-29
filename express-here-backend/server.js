@@ -70,22 +70,6 @@ app.get("/", async (req, res) => {
   }
 });
 
-// not required
-// app.get("/validusers", async (req, res) => {
-//   try {
-//     let posts = await userModel.find();
-//     res.status(200).json({
-//       status: 200,
-//       data: posts,
-//     });
-//   } catch (err) {
-//     res.status(400).json({
-//       status: 400,
-//       message: err.message,
-//     });
-//   }
-// });
-
 app.post("/login", async (req, res) => {
   try {
     const userData = await userModel.findOne({ userID: req.body.userID });
@@ -294,21 +278,20 @@ app.put("/discover/saveposts/:userID", async (req, res) => {
     });
   }
 });
-app.delete("/user/post/:postID", async (req, res) => {
+app.delete("/username/delete/savedposts/:userID", async (req, res) => {
   try {
-    const { postID } = req.params;
+    const { postID } = req.body.postID;
     const post = await postModel.findByIdAndRemove(postID);
-    if (post) {
-      res.status(200).json({
-        status: 200,
-        message: "Post deconsted successfully",
-      });
-    } else {
-      res.status(400).json({
-        status: 400,
-        message: "No post found",
-      });
-    }
+    await userModel.updateOne(
+      { userID: req.params.userID },
+      { $pull: { savedPostsIDs: req.params.userID } },
+      { new: true }
+    );
+    const posts = await postModel.find();
+    res.status(200).json({
+      status: 200,
+      data: posts,
+    });
   } catch (err) {
     res.status(400).json({
       status: 400,
@@ -317,22 +300,20 @@ app.delete("/user/post/:postID", async (req, res) => {
   }
 });
 
-app.delete("/users/:userID/saved/:savedID", async (req, res) => {
+app.delete("/username/delete/userposts/:userID", async (req, res) => {
   try {
-    const { userID, savedID } = req.params;
-    const user = await postModel.findById(userID);
-    user.savedPosts.pull(savedID);
-    if (saved) {
-      res.status(200).json({
-        status: 200,
-        message: "Post deconsted successfully",
-      });
-    } else {
-      res.status(400).json({
-        status: 400,
-        message: "No post found",
-      });
-    }
+    const { postID } = req.body.postID;
+    const post = await postModel.findByIdAndRemove(postID);
+    await userModel.updateOne(
+      { userID: req.params.userID },
+      { $pull: { userPostsIDs: req.params.userID } },
+      { new: true }
+    );
+    const posts = await postModel.find();
+    res.status(200).json({
+      status: 200,
+      data: posts,
+    });
   } catch (err) {
     res.status(400).json({
       status: 400,
