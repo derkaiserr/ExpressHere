@@ -6,8 +6,6 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "devStart": "nodemon server.js",
-    "predeploy" : "npm run build",
-    "deploy" : "gh-pages -d build",
   },
   "keywords": [],
   "author": "",
