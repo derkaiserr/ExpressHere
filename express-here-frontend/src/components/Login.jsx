@@ -18,7 +18,7 @@ const Login = (props) => {
                 alert("Successfully logged in!")
                 navigate("/") // navigate back to the previous page 
             } else {// If not, re-ask to login
-            alert("Email/Password wrong. Try again!")
+            alert("Email/Password wrong. Please try again!")
             setDetails(initialData)
             }
         } catch (err){
